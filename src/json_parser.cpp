@@ -6,22 +6,39 @@ std::vector<Activity> JsonParser::parse(const std::string& json) {
 
     size_t pos = 0;
     while (true) {
-        size_t typePos = json.find("\"type\":\"", pos);
-        if (typePos == std::string::npos) break;
+        // Find the next "type"
+        size_t tpos = json.find("\"type\"", pos);
+        if (tpos == std::string::npos) break;
 
-        typePos += 8; // skip `"type":"`
-        size_t typeEnd = json.find("\"", typePos);
-        std::string type = json.substr(typePos, typeEnd - typePos);
+        // Find the colon after "type"
+        size_t colon = json.find(":", tpos);
+        if (colon == std::string::npos) break;
 
-        size_t repoPos = json.find("\"name\":\"", typeEnd);
-        if (repoPos == std::string::npos) break;
+        // Find the start of the string value
+        size_t quote1 = json.find("\"", colon + 1);
+        size_t quote2 = json.find("\"", quote1 + 1);
+        if (quote1 == std::string::npos || quote2 == std::string::npos) break;
 
-        repoPos += 8; // skip `"name":"`
-        size_t repoEnd = json.find("\"", repoPos);
-        std::string repo = json.substr(repoPos, repoEnd - repoPos);
+        std::string type = json.substr(quote1 + 1, quote2 - quote1 - 1);
+
+        // Now find "repo"
+        size_t rpos = json.find("\"repo\"", quote2);
+        if (rpos == std::string::npos) break;
+
+        size_t namepos = json.find("\"name\"", rpos);
+        if (namepos == std::string::npos) break;
+
+        size_t colon2 = json.find(":", namepos);
+        size_t quote3 = json.find("\"", colon2 + 1);
+        size_t quote4 = json.find("\"", quote3 + 1);
+        if (quote3 == std::string::npos || quote4 == std::string::npos) break;
+
+        std::string repo = json.substr(quote3 + 1, quote4 - quote3 - 1);
 
         activities.push_back({type, repo});
-        pos = repoEnd;
+
+        // Move forward
+        pos = quote4 + 1;
     }
 
     return activities;
