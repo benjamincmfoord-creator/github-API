@@ -1,0 +1,3 @@
+/home/ben/projects/github-activity/build/CMakeFiles/github-activity.dir
+/home/ben/projects/github-activity/build/CMakeFiles/edit_cache.dir
+/home/ben/projects/github-activity/build/CMakeFiles/rebuild_cache.dir
